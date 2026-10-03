@@ -18,7 +18,7 @@ _More skills coming._
 git clone https://github.com/jbrck/skills-for-bluesky.git
 cd skills-for-bluesky/seed-post-blsky
 pip install atproto
-python3 scripts/seed-post-blsky.py "charlie kirk"
+python3 scripts/seed-post-blsky.py "hermes agent"
 ```
 
 ## Requirements

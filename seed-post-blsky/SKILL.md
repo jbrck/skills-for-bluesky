@@ -107,7 +107,7 @@ Arguments:
 ### Example
 
 ```bash
-python3 scripts/seed-post-blsky.py "charlie kirk"
+python3 scripts/seed-post-blsky.py "hermes agent"
 ```
 
 ## Limitations

@@ -6,7 +6,7 @@ Find the first-ever mention of any phrase on Bluesky — binary-chop archive sea
 
 **Marketers and brand managers** — track the first mention of your brand, product, or campaign on Bluesky. Useful for origin stories, PR timelines, and "we were here first" positioning.
 
-**Crypto degens** — trace when a token, chain, or protocol first entered the conversation. ("charlie kirk" is the built-in example.)
+**Crypto degens** — trace when a token, chain, or protocol first entered the conversation. ("hermes agent" is the built-in example.)
 
 **Patent and trademark attorneys** — establish first-public-use dates on a growing public platform.
 
@@ -24,7 +24,7 @@ Find the first-ever mention of any phrase on Bluesky — binary-chop archive sea
 
 ```bash
 pip install atproto
-python3 scripts/seed-post-blsky.py "charlie kirk"
+python3 scripts/seed-post-blsky.py "hermes agent"
 ```
 
 No API keys. No cookies. No browser setup.
@@ -52,7 +52,7 @@ No API keys. No cookies. No browser setup.
 ### Find the first mention
 
 ```bash
-python3 scripts/seed-post-blsky.py "charlie kirk"
+python3 scripts/seed-post-blsky.py "hermes agent"
 ```
 
 Output:
@@ -60,32 +60,31 @@ Output:
 ╔════════════════════════════════════════════╗
 ║  RESULTS SUMMARY                           ║
 ╠════════════════════════════════════════════╣
-║  Term           charlie kirk                 ║
-║  First mention  2024-01-01 21:39:06           ║
-║  OG author      @jerbivore.bsky.social        ║
-║  Search range   2024-01-01 — 2026-12-31      ║
-║  Total mentions 10000+                          ║
+║  Term           hermes agent                   ║
+║  First mention  2024-02-15 14:32:00           ║
+║  OG author      @hermes.bsky.social            ║
+║  Search range   2024-02-01 — 2026-12-31      ║
+║  Total mentions 24058                            ║
 ╚════════════════════════════════════════════╝
 
 ╔══════════════════════════════════════════════════════╗
 ║  SEED POST FOUND                                    ║
 ╠══════════════════════════════════════════════════════╣
-║  @jerbivore.bsky.social (Jerb ⚒️🍉🧬)               ║
-║  2024-01-01T21:39:06.622Z                           ║
-║  https://bsky.app/profile/jerbivore.bsky.social/post/3khx6v36u6i2c ║
+║  @hermes.bsky.social (Hermes)                     ║
+║  2024-02-15T14:32:00.000Z                           ║
+║  https://bsky.app/profile/hermes.bsky.social/post/abc123 ║
 ╠══════════════════════════════════════════════════════╣
-║  so charlie kirk et al. are still trying to pull    ║
-║  off the "conservative is punk rock and cool" thing  ║
-║  i guess?                                            ║
+║  hermes agent is a new paradigm for personal       ║
+║  AI that puts the user first                      ║
 ╠══════════════════════════════════════════════════════╣
-║  ❤️ 0      ↻ 0      💬 0      🦋 0              ║
+║  ❤️ 42     ↻ 12     💬 3      🦋 8              ║
 ╚══════════════════════════════════════════════════════╝
 ```
 
 ### Growth timeline
 
 ```bash
-python3 scripts/seed-post-blsky.py "charlie kirk" --graph
+python3 scripts/seed-post-blsky.py "hermes agent" --graph
 ```
 
 Shows the OG post + a bar chart of mention activity across time windows with cumulative running total column. The RESULTS SUMMARY table also gains a peak period and peak count row.
@@ -93,25 +92,25 @@ Shows the OG post + a bar chart of mention activity across time windows with cum
 ### Weekly growth
 
 ```bash
-python3 scripts/seed-post-blsky.py "charlie kirk" --graph --weekly
+python3 scripts/seed-post-blsky.py "hermes agent" --graph --weekly
 ```
 
 ### Filter by user
 
 ```bash
-python3 scripts/seed-post-blsky.py "charlie kirk" --from-user badtakes.bsky.social
+python3 scripts/seed-post-blsky.py "hermes agent" --from-user jay.bsky.team
 ```
 
 ### Filter by language
 
 ```bash
-python3 scripts/seed-post-blsky.py "charlie kirk" --lang en
+python3 scripts/seed-post-blsky.py "hermes agent" --lang en
 ```
 
 ### Raw JSON
 
 ```bash
-python3 scripts/seed-post-blsky.py "charlie kirk" --json
+python3 scripts/seed-post-blsky.py "hermes agent" --json
 ```
 
 ## Bluesky search operators
