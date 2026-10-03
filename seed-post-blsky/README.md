@@ -57,6 +57,16 @@ python3 scripts/seed-post-blsky.py "charlie kirk"
 
 Output:
 ```
+╔════════════════════════════════════════════╗
+║  RESULTS SUMMARY                           ║
+╠════════════════════════════════════════════╣
+║  Term           charlie kirk                 ║
+║  First mention  2024-01-01 21:39:06           ║
+║  OG author      @jerbivore.bsky.social        ║
+║  Search range   2024-01-01 — 2026-12-31      ║
+║  Total mentions 10000+                          ║
+╚════════════════════════════════════════════╝
+
 ╔══════════════════════════════════════════════════════╗
 ║  SEED POST FOUND                                    ║
 ╠══════════════════════════════════════════════════════╣
@@ -78,7 +88,7 @@ Output:
 python3 scripts/seed-post-blsky.py "charlie kirk" --graph
 ```
 
-Shows the OG post + a bar chart of mention activity across time windows with cumulative running total column.
+Shows the OG post + a bar chart of mention activity across time windows with cumulative running total column. The RESULTS SUMMARY table also gains a peak period and peak count row.
 
 ### Weekly growth
 
