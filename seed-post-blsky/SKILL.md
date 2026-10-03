@@ -37,112 +37,6 @@ A full search runs in under 60 seconds for most phrases. No authentication neede
 | API is undocumented internal GraphQL | API is documented AT Protocol stable endpoint (`api.bsky.app`) |
 | `since:` and `until:` as query string operators | `since` and `until` as structured API parameters |
 
-## Setup
-
-### 1. Install the dependency
-
-```bash
-pip install atproto
-```
-
-That's it. No Node.js, no npm, no cookies.
-
-### 2. Run it
-
-```bash
-python3 scripts/seed-post-blsky.py "charlie kirk"
-```
-
-## Usage
-
-```
-python3 scripts/seed-post-blsky.py <phrase> [--graph] [--annual] [--shares N] [--json]
-
-Arguments:
-  phrase       The exact phrase to search for (case-insensitive)
-  --graph, -g  Also run growth scan (mention frequency over time windows)
-  --weekly     Weekly growth windows (7-day intervals)
-  --daily      Daily growth windows (1-day intervals)
-  --annual     Calendar-year growth windows (for long-running terms)
-  --window     Growth window duration: '7d', '30d', '3m', '1y', etc.
-  --shares N   Show first N early mentions after the seed post
-  --from-user  Only posts from this user (from:user.bsky.social)
-  --lang       Language filter: 'en', 'ja', 'es', etc. (lang:code)
-  --domain     Only posts linking from this domain (domain:example.com)
-  --filter     Raw Bluesky search operators to append to query
-  --json, -j   Output raw JSON (machine-readable)
-  --after      Only search after this date (YYYY-MM-DD, inclusive)
-  --before     Only search before this date (YYYY-MM-DD, exclusive)
-```
-
-### Examples
-
-#### Find the first mention
-
-```bash
-python3 scripts/seed-post-blsky.py "charlie kirk"
-```
-
-Output:
-```
-╔══════════════════════════════════════════════════════╗
-║  SEED POST FOUND                                    ║
-╠══════════════════════════════════════════════════════╣
-║  @jerbivore.bsky.social (Jerb ⚒️🍉🧬)               ║
-║  2024-01-01T21:39:06.622Z                           ║
-║  https://bsky.app/profile/jerbivore.bsky.social/post/3khx6v36u6i2c ║
-╠══════════════════════════════════════════════════════╣
-║  so charlie kirk et al. are still trying to pull    ║
-║  off the "conservative is punk rock and cool" thing  ║
-║  i guess?                                            ║
-╠══════════════════════════════════════════════════════╣
-║  ❤️ 0      ↻ 0      💬 0      🦋 0              ║
-╚══════════════════════════════════════════════════════╝
-```
-
-#### Full search with growth timeline
-
-```bash
-python3 scripts/seed-post-blsky.py "charlie kirk" --graph
-```
-
-Shows the OG post + a bar chart of mention activity across time windows with cumulative running total.
-
-#### Weekly growth view
-
-```bash
-python3 scripts/seed-post-blsky.py "charlie kirk" --graph --weekly
-```
-
-#### Get raw JSON
-
-```bash
-python3 scripts/seed-post-blsky.py "charlie kirk" --json
-```
-
-#### Filter by user
-
-```bash
-python3 scripts/seed-post-blsky.py "charlie kirk" --from-user badtakes.bsky.social
-```
-
-#### Filter by language
-
-```bash
-python3 scripts/seed-post-blsky.py "charlie kirk" --lang en
-
-## Project structure
-
-```
-seed-post-blsky/
-├── SKILL.md                     # This file — docs + skill definition
-├── requirements.txt             # Python dependency: atproto
-├── .env.example                 # Placeholder (no auth needed)
-├── .gitignore
-└── scripts/
-    └── seed-post-blsky.py       # Main script — binary-chop + growth scan
-```
-
 ## Algorithm details
 
 ### Binary-chop date narrowing
@@ -182,6 +76,40 @@ Bluesky's search tokenizes queries. The script filters results client-side with 
 
 The script spaces queries 1.5 seconds apart to avoid triggering Bluesky's rate limits. A full search with growth scan makes ~30-50 API calls and takes 1-3 minutes. On rate limit, it backs off 30-60 seconds and retries up to 3 times.
 
+## Setup
+
+```bash
+pip install atproto
+```
+
+## Usage
+
+```
+python3 scripts/seed-post-blsky.py <phrase> [--graph] [--annual] [--shares N] [--json]
+
+Arguments:
+  phrase       The exact phrase to search for (case-insensitive)
+  --graph, -g  Also run growth scan (mention frequency over time windows)
+  --weekly     Weekly growth windows (7-day intervals)
+  --daily      Daily growth windows (1-day intervals)
+  --annual     Calendar-year growth windows (for long-running terms)
+  --window     Growth window duration: '7d', '30d', '3m', '1y', etc.
+  --shares N   Show first N early mentions after the seed post
+  --from-user  Only posts from this user (from:user.bsky.social)
+  --lang       Language filter: 'en', 'ja', 'es', etc. (lang:code)
+  --domain     Only posts linking from this domain (domain:example.com)
+  --filter     Raw Bluesky search operators to append to query
+  --json, -j   Output raw JSON (machine-readable)
+  --after      Only search after this date (YYYY-MM-DD, inclusive)
+  --before     Only search before this date (YYYY-MM-DD, exclusive)
+```
+
+### Example
+
+```bash
+python3 scripts/seed-post-blsky.py "charlie kirk"
+```
+
 ## Limitations
 
 - **Token-level search** — Bluesky's search matches tokens, not substrings. Client-side filtering catches most false positives.
@@ -190,18 +118,6 @@ The script spaces queries 1.5 seconds apart to avoid triggering Bluesky's rate l
 - **Deleted/private posts** — Not indexed by Bluesky's search.
 - **API limits** — Search returns max 100 posts per call. The growth scan's count per window is capped by sample size.
 - **sortAt vs createdAt** — Bluesky's `since`/`until` filters use the `sortAt` timestamp (when indexed), not `createdAt` (when posted). Minor discrepancies are possible for early posts.
-
-## Who this is for
-
-**Marketers and brand managers** — track the first mention of your brand, product, or campaign on Bluesky.
-
-**Crypto degens** — trace when a token, chain, or protocol first entered the conversation on Bluesky.
-
-**PR and crisis teams** — pinpoint when a rumor or claim first appeared on Bluesky.
-
-**Competitive intelligence** — find when a competitor first named a product category on the platform.
-
-**Political researchers** — trace when a slogan, hashtag, or narrative first appeared.
 
 ## Troubleshooting
 
@@ -218,5 +134,4 @@ MIT.
 
 ## Related
 
-Part of the `skills-for-bluesky` collection — standalone skills for Bluesky.
-See parent repo: https://github.com/jbrck/skills-for-bluesky
+See the user-facing README.md in this directory for examples and search operator reference.

@@ -1,6 +1,6 @@
 # skills-for-bluesky
 
-Standalone tools for mining Bluesky's archive via the AT Protocol public API.
+A growing collection of standalone tools for mining Bluesky's archive via the AT Protocol public API.
 
 No auth required. No Node.js. Just Python + `pip install atproto`.
 
@@ -10,23 +10,16 @@ No auth required. No Node.js. Just Python + `pip install atproto`.
 |-------|-------------|
 | [seed-post-blsky](seed-post-blsky/) | Find the first-ever mention of any phrase on Bluesky — binary-chop archive search + growth timeline |
 
-## Who this is for
+_More skills coming._
 
-**Marketers and brand managers** — track the first mention of your brand, product, or campaign on Bluesky. Useful for origin stories, PR timelines, and "we were here first" positioning.
+## Quick start
 
-**Crypto degens** — trace when a token, chain, or protocol first entered the conversation on Bluesky. ("charlie kirk" is the built-in example.)
-
-**Patent and trademark attorneys** — establish first-public-use dates on a growing public platform.
-
-**PR and crisis teams** — pinpoint when a rumor, lie, or leaked claim first appeared on Bluesky. Tighter correction timelines, faster takedown requests.
-
-**Competitive intelligence** — find when a competitor first named a product category on Bluesky.
-
-**Product managers** — locate the first user request for a feature. Hard data for roadmap justification.
-
-**Political and election researchers** — trace when a slogan, hashtag, or narrative entered the Bluesky conversation.
-
-**Disinformation researchers** — identify patient zero of a coordinated narrative on Bluesky.
+```shell
+git clone https://github.com/jbrck/skills-for-bluesky.git
+cd skills-for-bluesky/seed-post-blsky
+pip install atproto
+python3 scripts/seed-post-blsky.py "charlie kirk"
+```
 
 ## Requirements
 
@@ -40,6 +33,18 @@ No API keys. No cookies. No browser setup.
 Bluesky's public API at `https://api.bsky.app` is a documented, stable AT Protocol endpoint that requires zero authentication for search queries. This makes it dramatically simpler to build tools against compared to X's undocumented internal GraphQL API with fragile cookie auth.
 
 The tradeoff: Bluesky launched publicly in February 2024, so the archive is ~2.5 years deep instead of 18+. For most use cases — tracking brand mentions, product launches, or narrative origins — that's enough.
+
+## Adding a skill
+
+Skills live in their own directory under the repo root. Each needs:
+
+- A `README.md` (what it does, how to use it)
+- A `SKILL.md` (Hermes agent skill frontmatter)
+- A `requirements.txt` (pip dependencies)
+- A `.env.example` (environment template, even if unused)
+- Scripts in `scripts/`
+
+The root `README.md` skills table should be updated when a new skill is added.
 
 ## Porting from skills-for-x
 
