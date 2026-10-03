@@ -425,6 +425,36 @@ def scan_growth(
 
 # ── Output formatting ──────────────────────────────────────────────────
 
+def format_results_summary(result: dict) -> str:
+    """Build a results summary table from the result dict."""
+    og = result.get("og_post", {})
+    author = og.get("author", {})
+    handle = author.get("handle", "?")
+    created = og.get("createdAt", "?").split(".")[0].replace("T", " ")
+    total = result.get("total_mentions", 0)
+    lo = result.get("range_lo", "?")
+    hi = result.get("range_hi", "?")
+    peak_label = result.get("peak_label", "")
+    peak_count = result.get("peak_count", 0)
+    phrase = result.get("phrase", "")
+
+    card = []
+    card.append("╔════════════════════════════════════════════╗")
+    card.append("║  RESULTS SUMMARY                           ║")
+    card.append("╠════════════════════════════════════════════╣")
+    card.append(f"║  Term           {phrase:<28s} ║")
+    card.append(f"║  First mention  {created:<29s} ║")
+    card.append(f"║  OG author      @{handle:<28s} ║")
+    card.append(f"║  Search range   {lo} — {hi:<15s} ║")
+    if total:
+        card.append(f"║  Total mentions {str(total):<8s}                        ║")
+    if peak_label and peak_count:
+        card.append(f"║  Peak period    {peak_label:<29s} ║")
+        card.append(f"║  Peak count     {peak_count:<8d}                        ║")
+    card.append("╚════════════════════════════════════════════╝")
+    return "\n".join(card)
+
+
 def format_og_post(post: dict) -> str:
     author = post.get("author", {})
     handle = author.get("handle", "?")
@@ -678,6 +708,8 @@ def find_seed_post(
     )
 
     growth_data = None
+    peak_label = ""
+    peak_count = 0
     if growth:
         print(file=sys.stderr)
         print("Phase 6: Growth scan", file=sys.stderr)
@@ -688,6 +720,16 @@ def find_seed_post(
             phrase, first_date, window_days=window_days, annual=annual,
             weekly=weekly, daily=daily, filters=filters,
         )
+        if growth_data:
+            peak = max(growth_data, key=lambda w: w["count"])
+            peak_label = peak["label"]
+            peak_count = peak["count"]
+
+    total_mentions = 0
+    if growth_data:
+        total_mentions = sum(w["count"] for w in growth_data)
+    elif count > 0:
+        total_mentions = str(count) + "+"
 
     shares_data = None
     if shares_count > 0:
@@ -709,6 +751,11 @@ def find_seed_post(
         "og_post": first_post,
         "growth": growth_data,
         "early_shares": shares_data,
+        "total_mentions": total_mentions,
+        "peak_label": peak_label,
+        "peak_count": peak_count,
+        "range_lo": lo,
+        "range_hi": hi,
     }
 
 
@@ -797,10 +844,14 @@ def main():
     if args.json:
         print(json.dumps(result, indent=2, default=str))
     elif result.get("found"):
+        print(format_results_summary(result))
+        print()
         print(format_og_post(result["og_post"]))
         if result.get("early_shares"):
+            print()
             print(format_early_shares(result["early_shares"]))
         if result.get("growth"):
+            print()
             print(format_growth(result["growth"]))
     else:
         print(f"\n  No seed post found for \"{args.phrase}\".\n")
