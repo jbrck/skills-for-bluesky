@@ -438,20 +438,34 @@ def format_results_summary(result: dict) -> str:
     peak_count = result.get("peak_count", 0)
     phrase = result.get("phrase", "")
 
-    card = []
-    card.append("╔════════════════════════════════════════════╗")
-    card.append("║  RESULTS SUMMARY                           ║")
-    card.append("╠════════════════════════════════════════════╣")
-    card.append(f"║  Term           {phrase:<28s} ║")
-    card.append(f"║  First mention  {created:<29s} ║")
-    card.append(f"║  OG author      @{handle:<28s} ║")
-    card.append(f"║  Search range   {lo} — {hi:<15s} ║")
+    rows = []
+    rows.append(("Term", phrase))
+    rows.append(("First mention", created))
+    rows.append(("OG author", f"@{handle}"))
+    rows.append(("Search range", f"{lo} \u2014 {hi}"))
     if total:
-        card.append(f"║  Total mentions {str(total):<8s}                        ║")
+        rows.append(("Total mentions", str(total)))
     if peak_label and peak_count:
-        card.append(f"║  Peak period    {peak_label:<29s} ║")
-        card.append(f"║  Peak count     {peak_count:<8d}                        ║")
-    card.append("╚════════════════════════════════════════════╝")
+        rows.append(("Peak period", peak_label))
+        rows.append(("Peak count", f"{peak_count:,d}"))
+
+    # Build fixed-width columns. Labels left-aligned, values fill remaining space.
+    inner_w = 50
+    label_w = max(len(k) for k, _ in rows) if rows else 0
+    val_w = inner_w - label_w - 3  # 3 for label/value margins
+    if val_w < 10:
+        val_w = min(max(len(v) for _, v in rows) if rows else 0, inner_w - 10)
+        label_w = inner_w - val_w - 3
+    sep = "═" * inner_w
+
+    card = []
+    card.append(f"╔{sep}╗")
+    title = f" RESULTS SUMMARY "
+    card.append(f"║{title:<{inner_w}s}║")
+    card.append(f"╠{sep}╣")
+    for lbl, val in rows:
+        card.append(f"║ {lbl:<{label_w}s} {val:<{val_w}s} ║")
+    card.append(f"╚{sep}╝")
     return "\n".join(card)
 
 
@@ -471,7 +485,7 @@ def format_og_post(post: dict) -> str:
     wrapped = []
     line = ""
     for w in words:
-        if len(line) + len(w) + 1 > 50:
+        if len(line) + len(w) + 1 > 47:
             wrapped.append(line)
             line = w
         else:
@@ -484,16 +498,16 @@ def format_og_post(post: dict) -> str:
     card.append("║  SEED POST FOUND                                    ║")
     card.append("╠══════════════════════════════════════════════════════╣")
     name_part = f"@{handle} ({display_name})" if display_name else f"@{handle}"
-    card.append(f"║  {name_part:<48s} ║")
-    card.append(f"║  {created_at:<46s} ║")
-    card.append(f"║  {web_url:<48s} ║")
+    card.append(f"║  {name_part:<47s} ║")
+    card.append(f"║  {created_at:<47s} ║")
+    card.append(f"║  {web_url:<47s} ║")
     card.append("╠══════════════════════════════════════════════════════╣")
     for line_text in wrapped:
-        card.append(f"║  {line_text:<48s} ║")
+        card.append(f"║  {line_text:<47s} ║")
     card.append("╠══════════════════════════════════════════════════════╣")
-    card.append(
-        f"║  ❤️ {likes:<5d}  ↻ {rts:<5d}  💬 {replies:<5d}  🦋 {quotes:<5d}    ║"
-    )
+    # Build engagement line with dynamic right padding to fill 50-char interior
+    engage = f"  ❤️ {likes:<5d}  ↻ {rts:<5d}  💬 {replies:<5d}  🦋 {quotes:<5d}"
+    card.append(f"║{engage:<50s}║")
     card.append("╚══════════════════════════════════════════════════════╝")
     return "\n".join(card)
 
@@ -507,11 +521,6 @@ def format_growth(windows: list) -> str:
     scale = bar_width / max_count if max_count > 0 else 1
 
     cumulative = 0
-    lines = [
-        "╔══════════════════════════════════════════════════════╗",
-        "║  GROWTH TIMELINE     mentions over time              ║",
-        "╠════╦══════════════════╦═══════╦═══════════╦═══════════════════════╣",
-    ]
 
     display = []
     i = 0
@@ -533,6 +542,15 @@ def format_growth(windows: list) -> str:
             display.append(w)
             i += 1
 
+    # Determine column widths from actual data
+    lbl_w = max(len(d["label"]) for d in display)
+    lbl_w = max(lbl_w, 5)  # floor
+    dr_w = 28  # fixed wide for date ranges
+    cnt_w = 5
+    cum_w = 7
+
+    # Build content rows and track the widest line
+    data_lines = []
     for d in display:
         count = d["count"]
         cumulative += count
@@ -540,20 +558,33 @@ def format_growth(windows: list) -> str:
         bar = "█" * min(bar_len, bar_width)
         lbl = d["label"]
         dr = d.get("date_range", "")
-        lines.append(f"║ {lbl:>5s} ║ {dr:28s} ║ {count:5d} ║ {cumulative:7d} ║ {bar:{bar_width}s} ║")
+        data_lines.append(
+            f"║ {lbl:>{lbl_w}s} ║ {dr:<{dr_w}s} ║ {count:{cnt_w}d} ║ {cumulative:{cum_w}d} ║ {bar:<{bar_width}s} ║"
+        )
+
+    # Build header separator to match data line width
+    # Data interior between ║s: 1(l) + lbl_w + 3 + dr_w + 3 + cnt_w + 3 + cum_w + 3 + bar_width + 1(t)
+    #  = lbl_w + dr_w + cnt_w + cum_w + bar_width + 1 + 3 + 3 + 3 + 3 + 1
+    inner = 1 + lbl_w + 3 + dr_w + 3 + cnt_w + 3 + cum_w + 3 + bar_width + 1
+    sep = f"╠{'═'*lbl_w}╦{'═'*dr_w}╦{'═'*cnt_w}╦{'═'*cum_w}╦{'═'*bar_width}╣"
+    top = "╔" + "═" * inner + "╗"
+    title = " GROWTH TIMELINE "
+    title_line = f"║{title}{' ' * (inner - len(title))}║"
+
+    lines = [top, title_line, sep]
+    lines.extend(data_lines)
 
     collapsed_total = sum(d.get("collapsed", 0) for d in display if d.get("collapsed"))
     if collapsed_total:
         last_count = display[-1]["count"] if display else 0
         collapsed_rows = sum(1 for d in display if d.get("collapsed"))
         unit = "rows" if collapsed_rows > 1 else "row"
-        lines.append("╠════╧══════════════════╧═══════╧═══════════════════╣")
-        lines.append(
-            f"║ {collapsed_total} @ {last_count}+ posts"
-            f" — {collapsed_rows} {unit} collapsed{' ║' if collapsed_rows > 1 else '    ║'}"
-        )
+        bot_sep = f"╠{'═'*lbl_w}╧{'═'*dr_w}╧{'═'*cnt_w}╧{'═'*cum_w}╧{'═'*bar_width}╣"
+        lines.append(bot_sep)
+        collapse_text = f" {collapsed_total} @ {last_count}+ posts — {collapsed_rows} {unit} collapsed"
+        lines.append(f"║{collapse_text:<{inner}s}║")
 
-    lines.append("╚══════════════════════════════════════════════════════╝")
+    lines.append("╚" + "═" * inner + "╝")
     return "\n".join(lines)
 
 
@@ -602,7 +633,8 @@ def format_early_shares(shares: list) -> str:
         handle = author.get("handle", "?")
         text = t.get("text", "").replace("\n", " ")[:80]
         created = t.get("createdAt", "?")
-        card.append(f"║  {i}. @{handle:<35s}           ║")
+        handle_prefix = f"{i}. @{handle}"
+        card.append(f"║  {handle_prefix:<47s} ║")
         card.append(f"║     {created:<44s} ║")
         words = text.split()
         line = ""
