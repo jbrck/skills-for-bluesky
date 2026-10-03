@@ -14,7 +14,7 @@ No auth required. No Node.js. Just Python + `pip install atproto`.
 
 **Marketers and brand managers** — track the first mention of your brand, product, or campaign on Bluesky. Useful for origin stories, PR timelines, and "we were here first" positioning.
 
-**Crypto degens** — trace when a token, chain, or protocol first entered the conversation on Bluesky. (Bitcoin's first post is the built-in example.)
+**Crypto degens** — trace when a token, chain, or protocol first entered the conversation on Bluesky. ("charlie kirk" is the built-in example.)
 
 **Patent and trademark attorneys** — establish first-public-use dates on a growing public platform.
 

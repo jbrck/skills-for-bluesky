@@ -50,7 +50,7 @@ That's it. No Node.js, no npm, no cookies.
 ### 2. Run it
 
 ```bash
-python3 scripts/seed-post-blsky.py "bitcoin"
+python3 scripts/seed-post-blsky.py "charlie kirk"
 ```
 
 ## Usage
@@ -80,7 +80,7 @@ Arguments:
 #### Find the first mention
 
 ```bash
-python3 scripts/seed-post-blsky.py "bitcoin"
+python3 scripts/seed-post-blsky.py "charlie kirk"
 ```
 
 Output:
@@ -88,35 +88,48 @@ Output:
 ╔══════════════════════════════════════════════════════╗
 ║  SEED POST FOUND                                    ║
 ╠══════════════════════════════════════════════════════╣
-║  @bitcoiner.social                                  ║
-║  2024-02-15T14:32:00.000Z                           ║
-║  https://bsky.app/profile/bitcoiner.social/post/xxx ║
+║  @jerbivore.bsky.social (Jerb ⚒️🍉🧬)               ║
+║  2024-01-01T21:39:06.622Z                           ║
+║  https://bsky.app/profile/jerbivore.bsky.social/post/3khx6v36u6i2c ║
 ╠══════════════════════════════════════════════════════╣
-║  Is anyone else watching the bitcoin chart today?   ║
+║  so charlie kirk et al. are still trying to pull    ║
+║  off the "conservative is punk rock and cool" thing  ║
+║  i guess?                                            ║
 ╠══════════════════════════════════════════════════════╣
-║  ❤️ 133  ↻ 44  💬 11  🦋 7                        ║
+║  ❤️ 0      ↻ 0      💬 0      🦋 0              ║
 ╚══════════════════════════════════════════════════════╝
 ```
 
 #### Full search with growth timeline
 
 ```bash
-python3 scripts/seed-post-blsky.py "bitcoin" --graph
+python3 scripts/seed-post-blsky.py "charlie kirk" --graph
 ```
 
-Shows the OG post + a bar chart of mention activity across time windows.
+Shows the OG post + a bar chart of mention activity across time windows with cumulative running total.
 
-#### Annual growth view
+#### Weekly growth view
 
 ```bash
-python3 scripts/seed-post-blsky.py "bitcoin" --graph --annual
+python3 scripts/seed-post-blsky.py "charlie kirk" --graph --weekly
 ```
 
 #### Get raw JSON
 
 ```bash
-python3 scripts/seed-post-blsky.py "bitcoin" --json
+python3 scripts/seed-post-blsky.py "charlie kirk" --json
 ```
+
+#### Filter by user
+
+```bash
+python3 scripts/seed-post-blsky.py "charlie kirk" --from-user badtakes.bsky.social
+```
+
+#### Filter by language
+
+```bash
+python3 scripts/seed-post-blsky.py "charlie kirk" --lang en
 
 ## Project structure
 
