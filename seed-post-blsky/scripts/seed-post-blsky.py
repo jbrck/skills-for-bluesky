@@ -563,10 +563,10 @@ def format_growth(windows: list) -> str:
         )
 
     # Build header separator to match data line width
-    # Data interior between ║s: 1(l) + lbl_w + 3 + dr_w + 3 + cnt_w + 3 + cum_w + 3 + bar_width + 1(t)
-    #  = lbl_w + dr_w + cnt_w + cum_w + bar_width + 1 + 3 + 3 + 3 + 3 + 1
-    inner = 1 + lbl_w + 3 + dr_w + 3 + cnt_w + 3 + cum_w + 3 + bar_width + 1
-    sep = f"╠{'═'*lbl_w}╦{'═'*dr_w}╦{'═'*cnt_w}╦{'═'*cum_w}╦{'═'*bar_width}╣"
+    # Row interior (between outer ║): " {lbl} ║ {dr} ║ {cnt} ║ {cum} ║ {bar} "
+    # = 1 + lbl_w + 3 + dr_w + 3 + cnt_w + 3 + cum_w + 3 + bar_width + 1
+    inner = lbl_w + dr_w + cnt_w + cum_w + bar_width + 14
+    sep = f"╠{'═'*(lbl_w+2)}╦{'═'*(dr_w+2)}╦{'═'*(cnt_w+2)}╦{'═'*(cum_w+2)}╦{'═'*(bar_width+2)}╣"
     top = "╔" + "═" * inner + "╗"
     title = " GROWTH TIMELINE "
     title_line = f"║{title}{' ' * (inner - len(title))}║"
@@ -579,7 +579,7 @@ def format_growth(windows: list) -> str:
         last_count = display[-1]["count"] if display else 0
         collapsed_rows = sum(1 for d in display if d.get("collapsed"))
         unit = "rows" if collapsed_rows > 1 else "row"
-        bot_sep = f"╠{'═'*lbl_w}╧{'═'*dr_w}╧{'═'*cnt_w}╧{'═'*cum_w}╧{'═'*bar_width}╣"
+        bot_sep = f"╠{'═'*(lbl_w+2)}╧{'═'*(dr_w+2)}╧{'═'*(cnt_w+2)}╧{'═'*(cum_w+2)}╧{'═'*(bar_width+2)}╣"
         lines.append(bot_sep)
         collapse_text = f" {collapsed_total} @ {last_count}+ posts — {collapsed_rows} {unit} collapsed"
         lines.append(f"║{collapse_text:<{inner}s}║")
